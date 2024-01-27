@@ -24,6 +24,11 @@ def mult():
 def formulario1():
     return render_template("formulario1.html")
 
+@app.route("/formulario2")
+def formulario2():
+    return render_template("formulario2.html")
+'''
+
 @app.route("/resultado2", methods=["GET", "POST"])
 def mult():
     if request.method == "POST":
@@ -31,7 +36,7 @@ def mult():
         num2=request.form.get("n2")
 
         return "<h1>La multiplicacion es: {}</h1>".format(str(int(num1) * int(num2)))
-
+'''
 @app.route("/")
 def index():
     escuela = "UTL"

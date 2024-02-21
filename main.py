@@ -1,6 +1,26 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, flash, Response
 import forms
+from flask_wtf.csrf import CSRFProtect
+from flask import redirect
+from flask import g 
 app = Flask(__name__)
+app.secret_key='esta es la clave secreta'
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'),404
+
+@app.before_request
+def before_request():
+    # g.nombre = 'Daniel'
+    print('before_request')
+    
+    
+@app.after_request
+def after_request(response):
+    if 'Daniel' not in g.nombre and request.endpoint not in ['/index']:
+        return redirect('index.html')
+    return response
 
 @app.route("/multiplicar", methods=["GET", "POST"])
 def mult():
@@ -37,14 +57,17 @@ def mult():
 
         return "<h1>La multiplicacion es: {}</h1>".format(str(int(num1) * int(num2)))
 '''
-@app.route("/")
+@app.route("/index")
 def index():
+    g.nombre = 'Daniel'
     escuela = "UTL"
     alumnos = ["Mario", "Pedro", "Luis", "David"]
     return render_template("index.html" , escuela = escuela, alumnos = alumnos)
 
 @app.route("/alumnos", methods = ["GET","POST"])
 def alum():
+    print('dentro de alumnos')
+    print('Hola: {}'.format(g.nombre))
     nom=''
     apa=''
     ama=''
@@ -53,6 +76,8 @@ def alum():
         nom = alum_form.nombre.data
         apa = alum_form.apaterno.data
         ama = alum_form.amaterno.data
+        mensaje = 'Bienvenido {}'.format(nom)
+        flash(mensaje)
         print("Nombre: {}".format(nom))
         print("ApellidoPa: {}".format(apa))
         print("ApellidoMa: {}".format(ama))
